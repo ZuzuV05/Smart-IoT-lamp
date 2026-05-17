@@ -1,0 +1,6 @@
+{
+  "name": "IoT Smart Home Dashboard",
+  "description": "Smart home dashboard using MQTT for monitoring sensors and controlling relays with Gemini NLP support in Indonesian.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

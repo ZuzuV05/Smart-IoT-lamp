@@ -82,8 +82,11 @@ export default function App() {
     });
 
     mqttClient.on('error', (err: any) => {
+      const errMsg = err && err.message ? err.message : String(err);
+      if (errMsg.includes('client disconnecting') || errMsg.includes('close')) {
+        return; // Ignore this expected disconnect error 
+      }
       console.error('MQTT Error: ', err);
-      // setConnected('terputus');
     });
 
     mqttClient.on('offline', () => {
@@ -154,62 +157,62 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-slate-200 font-sans p-4 sm:p-6 lg:p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div style={{ minHeight: '100vh', backgroundColor: '#0a0a0a', color: '#e2e8f0', fontFamily: 'sans-serif', padding: '24px', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: '1152px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
         
         {/* Header */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-gray-900 border border-gray-800 rounded-2xl shadow-xl">
+        <header style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', padding: '24px', backgroundColor: '#171717', border: '1px solid #262626', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
           <div>
-            <h1 className="text-2xl font-semibold text-white">IoT Smart Dashboard</h1>
-            <p className="text-gray-400 text-sm mt-1">Kendali terpusat</p>
+            <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#ffffff', margin: 0 }}>IoT Smart Dashboard</h1>
+            <p style={{ color: '#9ca3af', fontSize: '14px', marginTop: '4px', marginBottom: 0 }}>Kendali terpusat</p>
           </div>
           
-          <div className="mt-4 sm:mt-0 flex items-center px-4 py-2 rounded-full bg-gray-950 border border-gray-800">
-            <span className="relative flex h-3 w-3 mr-3">
+          <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', padding: '8px 16px', borderRadius: '9999px', backgroundColor: '#0a0a0a', border: '1px solid #262626' }}>
+            <span style={{ position: 'relative', display: 'flex', height: '12px', width: '12px', marginRight: '12px' }}>
               {connected === 'terhubung' && (
                 <>
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  <span style={{ position: 'absolute', display: 'inline-flex', height: '100%', width: '100%', borderRadius: '50%', backgroundColor: '#34d399', opacity: 0.75 }}></span>
+                  <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: '12px', width: '12px', backgroundColor: '#10b981' }}></span>
                 </>
               )}
               {connected === 'menghubungkan' && (
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500 animate-pulse"></span>
+                <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: '12px', width: '12px', backgroundColor: '#eab308' }}></span>
               )}
               {connected === 'terputus' && (
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: '12px', width: '12px', backgroundColor: '#ef4444' }}></span>
               )}
             </span>
-            <span className="text-sm font-medium capitalize">
+            <span style={{ fontSize: '14px', fontWeight: '500', textTransform: 'capitalize' }}>
               {connected}
             </span>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
           
-          {/* Main Controls Panel (Left, 2 cols) */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* Main Controls Panel */}
+          <div style={{ flex: '1 1 60%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
             
             {/* Sensors View */}
-            <section className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex items-center space-x-4">
-                <div className="p-4 bg-orange-500/10 rounded-xl text-orange-400 shrink-0">
-                  <Thermometer className="w-8 h-8" />
+            <section style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 200px', backgroundColor: '#171717', padding: '24px', borderRadius: '16px', border: '1px solid #262626', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ padding: '16px', backgroundColor: 'rgba(249, 115, 22, 0.1)', borderRadius: '12px', color: '#fb923c', flexShrink: 0 }}>
+                  <Thermometer size={32} />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm font-medium">Suhu Ruangan</p>
-                  <p className="text-3xl font-bold text-white mt-1">
+                  <p style={{ color: '#9ca3af', fontSize: '14px', fontWeight: '500', margin: 0 }}>Suhu Ruangan</p>
+                  <p style={{ fontSize: '30px', fontWeight: 'bold', color: '#ffffff', marginTop: '4px', marginBottom: 0 }}>
                     {temperature !== '--' ? `${temperature}°C` : '--'}
                   </p>
                 </div>
               </div>
-              <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex items-center space-x-4">
-                <div className="p-4 bg-blue-500/10 rounded-xl text-blue-400 shrink-0">
-                  <Droplets className="w-8 h-8" />
+              <div style={{ flex: '1 1 200px', backgroundColor: '#171717', padding: '24px', borderRadius: '16px', border: '1px solid #262626', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ padding: '16px', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px', color: '#60a5fa', flexShrink: 0 }}>
+                  <Droplets size={32} />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm font-medium">Kelembapan</p>
-                  <p className="text-3xl font-bold text-white mt-1">
+                  <p style={{ color: '#9ca3af', fontSize: '14px', fontWeight: '500', margin: 0 }}>Kelembapan</p>
+                  <p style={{ fontSize: '30px', fontWeight: 'bold', color: '#ffffff', marginTop: '4px', marginBottom: 0 }}>
                     {humidity !== '--' ? `${humidity}%` : '--'}
                   </p>
                 </div>
@@ -217,47 +220,45 @@ export default function App() {
             </section>
 
             {/* Relay Grids */}
-            <section className="bg-gray-900 p-6 md:p-8 rounded-2xl border border-gray-800">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h2 className="text-xl font-medium text-white mb-4 sm:mb-0">Kendali Lampu</h2>
-                <div className="flex gap-3">
+            <section style={{ backgroundColor: '#171717', padding: '32px', borderRadius: '16px', border: '1px solid #262626' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: '500', color: '#ffffff', margin: 0 }}>Kendali Lampu</h2>
+                <div style={{ display: 'flex', gap: '12px' }}>
                   <button 
                     onClick={() => sendCommand('all_on')}
-                    className="flex items-center space-x-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-4 py-2 rounded-lg font-medium transition-colors"
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#34d399', padding: '8px 16px', borderRadius: '8px', fontWeight: '500', border: 'none', cursor: 'pointer' }}
                   >
-                    <Power className="w-4 h-4" />
+                    <Power size={16} />
                     <span>Nyalakan Semua</span>
                   </button>
                   <button 
                     onClick={() => sendCommand('all_off')}
-                    className="flex items-center space-x-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 px-4 py-2 rounded-lg font-medium transition-colors"
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#f87171', padding: '8px 16px', borderRadius: '8px', fontWeight: '500', border: 'none', cursor: 'pointer' }}
                   >
-                    <PowerOff className="w-4 h-4" />
+                    <PowerOff size={16} />
                     <span>Matikan Semua</span>
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
                 {relays.map((isOn, idx) => (
                   <button
                     key={idx}
                     onClick={() => toggleRelay(idx)}
-                    className={`relative flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${
-                      isOn 
-                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' 
-                        : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-gray-300'
-                    }`}
+                    style={{
+                      position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', border: isOn ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid #374151', borderRadius: '12px', transition: 'all 0.2s', backgroundColor: isOn ? 'rgba(245, 158, 11, 0.1)' : 'rgba(31, 41, 55, 0.5)', color: isOn ? '#f59e0b' : '#9ca3af', cursor: 'pointer'
+                    }}
                   >
                     <motion.div
                       animate={{ scale: isOn ? 1.1 : 1 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className="mb-4"
+                      style={{ marginBottom: '16px' }}
                     >
-                      {isOn ? <Lightbulb className="w-10 h-10 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" /> : <LightbulbOff className="w-10 h-10" />}
+                      {isOn ? <Lightbulb size={40} style={{ filter: 'drop-shadow(0 0 15px rgba(245,158,11,0.5))' }} /> : <LightbulbOff size={40} />}
                     </motion.div>
-                    <span className="font-semibold text-gray-200">Lampu {idx + 1}</span>
-                    <span className="font-mono text-xs mt-2 uppercase px-2 py-1 bg-gray-950 rounded-md shadow-inner">
+                    <span style={{ fontWeight: '600', color: '#e5e7eb' }}>Lampu {idx + 1}</span>
+                    <span style={{ fontFamily: 'monospace', fontSize: '12px', marginTop: '8px', textTransform: 'uppercase', padding: '4px 8px', backgroundColor: '#0a0a0a', borderRadius: '6px', boxShadow: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)' }}>
                       {isOn ? 'ON' : 'OFF'}
                     </span>
                   </button>
@@ -266,36 +267,36 @@ export default function App() {
             </section>
           </div>
 
-          {/* Logs Panel (Right, 1 col) */}
-          <div className="space-y-6 flex flex-col h-full">
+          {/* Logs Panel */}
+          <div style={{ flex: '1 1 30%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
             
             {/* Activity Log */}
-            <section className="bg-gray-900 border border-gray-800 rounded-2xl flex-1 min-h-[300px] flex flex-col h-[600px]">
-              <div className="p-5 border-b border-gray-800 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Activity className="w-5 h-5 text-gray-400" />
-                  <h3 className="font-medium text-white">Log Aktivitas</h3>
+            <section style={{ backgroundColor: '#171717', border: '1px solid #262626', borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '600px', flex: 1 }}>
+              <div style={{ padding: '20px', borderBottom: '1px solid #262626', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Activity size={20} color="#9ca3af" />
+                  <h3 style={{ fontWeight: '500', color: '#ffffff', margin: 0 }}>Log Aktivitas</h3>
                 </div>
-                <span className="text-xs text-gray-500 font-mono tracking-wider">MQTT</span>
+                <span style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace', letterSpacing: '0.05em' }}>MQTT</span>
               </div>
               
-              <div className="flex-1 p-5 overflow-y-auto w-full">
-                <div className="space-y-3">
+              <div style={{ flex: 1, padding: '20px', overflowY: 'auto', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <AnimatePresence initial={false}>
                     {logs.map((log) => (
                       <motion.div 
                         key={log.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="flex space-x-3 text-sm pb-3 border-b border-gray-800/50 last:border-0"
+                        style={{ display: 'flex', gap: '12px', fontSize: '14px', paddingBottom: '12px', borderBottom: '1px solid rgba(38, 38, 38, 0.5)' }}
                       >
-                        <span className="text-gray-500 font-mono shrink-0">[{log.time}]</span>
-                        <span className="text-gray-300 break-words">{log.message}</span>
+                        <span style={{ color: '#6b7280', fontFamily: 'monospace', flexShrink: 0 }}>[{log.time}]</span>
+                        <span style={{ color: '#d1d5db', wordBreak: 'break-word' }}>{log.message}</span>
                       </motion.div>
                     ))}
                     {logs.length === 0 && (
-                      <div className="text-gray-600 text-center text-sm py-8 italic flex flex-col items-center">
-                        <AlertCircle className="w-6 h-6 mb-2 opacity-50" />
+                      <div style={{ color: '#4b5563', textAlign: 'center', fontSize: '14px', padding: '32px 0', fontStyle: 'italic', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <AlertCircle size={24} style={{ marginBottom: '8px', opacity: 0.5 }} />
                         Belum ada aktivitas tercatat
                       </div>
                     )}
